@@ -3,8 +3,11 @@ package com.agenda.controllers;
 import com.agenda.models.Contato;
 import com.agenda.models.Usuario;
 import com.agenda.repositorys.UsuarioRepository;
+import com.agenda.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +21,11 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioService usuarioService;
+
+    private Boolean login;
 
     @GetMapping("/usuarios")
     public ResponseEntity<List<Usuario>> getAllUsuarios(){
@@ -62,5 +70,32 @@ public class UsuarioController {
         usuario.setId(usuarioO.get().getId());
         System.out.println("Rodou um put id: " + usuario.getId() + " e nome: " + usuario.getUsuario());
         return new ResponseEntity<>(usuarioRepository.save(usuario), HttpStatus.OK);
+    }
+
+
+
+    @PostMapping(path = "/usuarios/login", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody Boolean loginUsuario(@Validated @RequestBody Usuario usuario) {
+        login = usuarioService.fazerLogin(usuario);
+        if (login  == false){
+            return Boolean.FALSE;
+        }
+        return Boolean.TRUE;
+    }
+
+    public UsuarioService getUsuarioService() {
+        return usuarioService;
+    }
+
+    public void setUsuarioService(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
+
+    public Boolean getLogin() {
+        return login;
+    }
+
+    public void setLogin(Boolean login) {
+        this.login = login;
     }
 }
