@@ -1,5 +1,8 @@
 package com.agenda.models;
 
+import com.sun.istack.NotNull;
+import org.springframework.lang.NonNull;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,8 +14,11 @@ public class Contato {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotNull
     private String nome;
+    @NotNull
     private String telefone;
+    @NotNull
     private String email;
 
     public long getId() {

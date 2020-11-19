@@ -1,7 +1,7 @@
 package com.agenda.controllers;
 
 import com.agenda.models.Contato;
-import com.agenda.repositorys.ContatoDAO;
+import com.agenda.repositorys.ContatoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +12,15 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class ContatoController {
 
     @Autowired
-    private ContatoDAO contatoDAO;
+    private ContatoRepository contatoRepository;
 
     @GetMapping("/contatos")
     public ResponseEntity<List<Contato>> getAllContatos(){
-        List<Contato> contatos = contatoDAO.findAll();
+        List<Contato> contatos = contatoRepository.findAll();
         if (contatos.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -28,7 +29,7 @@ public class ContatoController {
 
     @GetMapping("/contatos/{id}")
     public ResponseEntity<Contato> getOneContato(@PathVariable(value = "id") long id){
-        Optional<Contato> contatoO = contatoDAO.findById(id);
+        Optional<Contato> contatoO = contatoRepository.findById(id);
         if (contatoO == null){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -36,27 +37,29 @@ public class ContatoController {
     }
 
     @PostMapping("/contatos")
-    public ResponseEntity<Contato> createContato(@RequestBody Contato contato){
-        return new ResponseEntity<Contato>(contatoDAO.save(contato), HttpStatus.CREATED);
+    public ResponseEntity<Contato> createContato(@Validated @RequestBody Contato contato){
+        return new ResponseEntity<Contato>(contatoRepository.save(contato), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/contatos/{id}")
-    public ResponseEntity<Contato> deleteContato(@PathVariable(value = "id") long id){
-        Optional<Contato> contatoO = contatoDAO.findById(id);
+    public ResponseEntity<?> deleteContato(@PathVariable(value = "id") long id){
+        Optional<Contato> contatoO = contatoRepository.findById(id);
         if (!contatoO.isPresent()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        contatoDAO.delete(contatoO.get());
+        contatoRepository.delete(contatoO.get());
+        System.out.println("Rodou um delete id: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/contatos/{id}")
-    public ResponseEntity<Contato> editContato(@PathVariable(value = "id") long id, @RequestBody Contato contato) {
-        Optional<Contato> contatoO = contatoDAO.findById(id);
+    public ResponseEntity<Contato> editContato(@Validated @PathVariable(value = "id") long id, @RequestBody Contato contato) {
+        Optional<Contato> contatoO = contatoRepository.findById(id);
         if (!contatoO.isPresent()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         contato.setId(contatoO.get().getId());
-        return new ResponseEntity<>(contatoDAO.save(contato), HttpStatus.OK);
+        System.out.println("Rodou um put id: " + contato.getId() + " e nome: " + contato.getNome());
+        return new ResponseEntity<>(contatoRepository.save(contato), HttpStatus.OK);
     }
 }
