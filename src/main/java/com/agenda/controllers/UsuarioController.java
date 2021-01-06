@@ -57,7 +57,6 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         usuarioRepository.delete(usuarioO.get());
-        System.out.println("Rodou um delete id: " + id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -68,20 +67,19 @@ public class UsuarioController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         usuario.setId(usuarioO.get().getId());
-        System.out.println("Rodou um put id: " + usuario.getId() + " e nome: " + usuario.getUsuario());
         return new ResponseEntity<>(usuarioRepository.save(usuario), HttpStatus.OK);
     }
 
 
 
-    @PostMapping(path = "/usuarios/login", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody Boolean loginUsuario(@Validated @RequestBody Usuario usuario) {
-        login = usuarioService.fazerLogin(usuario);
-        if (login  == false){
-            return Boolean.FALSE;
-        }
-        return Boolean.TRUE;
-    }
+//    @PostMapping(path = "/usuarios/login", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public @ResponseBody Boolean loginUsuario(@Validated @RequestBody Usuario usuario) {
+//        login = usuarioService.fazerLogin(usuario);
+//        if (login  == false){
+//            return Boolean.FALSE;
+//        }
+//        return Boolean.TRUE;
+//    }
 
     public UsuarioService getUsuarioService() {
         return usuarioService;
