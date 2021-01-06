@@ -1,13 +1,10 @@
 package com.agenda.controllers;
 
-import com.agenda.models.Contato;
 import com.agenda.models.Usuario;
 import com.agenda.repositorys.UsuarioRepository;
 import com.agenda.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("usuarios")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class UsuarioController {
 
@@ -27,7 +25,7 @@ public class UsuarioController {
 
     private Boolean login;
 
-    @GetMapping("/usuarios")
+    @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsuarios(){
         List<Usuario> usuarios = usuarioRepository.findAll();
         if (usuarios.isEmpty()) {
@@ -36,7 +34,7 @@ public class UsuarioController {
         return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
     }
 
-    @GetMapping("/usuarios/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Usuario> getOneUsuario(@PathVariable(value = "id") long id){
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
         if (usuarioO == null){
@@ -45,12 +43,12 @@ public class UsuarioController {
         return new ResponseEntity<Usuario>(usuarioO.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/usuarios")
+    @PostMapping
     public ResponseEntity<Usuario> createUsuario(@Validated @RequestBody Usuario usuario){
         return new ResponseEntity<Usuario>(usuarioRepository.save(usuario), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/usuarios/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable(value = "id") long id){
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
         if (!usuarioO.isPresent()){
@@ -60,7 +58,7 @@ public class UsuarioController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/usuarios/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<Usuario> editUsuario(@Validated @PathVariable(value = "id") long id, @RequestBody Usuario usuario) {
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
         if (!usuarioO.isPresent()){
