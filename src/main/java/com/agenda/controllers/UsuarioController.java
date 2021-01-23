@@ -1,5 +1,6 @@
 package com.agenda.controllers;
 
+import com.agenda.dto.UsuarioDTO;
 import com.agenda.models.Usuario;
 import com.agenda.services.UsuarioService;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,8 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody Usuario usuario){
-        return new ResponseEntity<>(usuarioService.save(usuario), HttpStatus.CREATED);
+    public ResponseEntity<Usuario> createUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO){
+        return new ResponseEntity<>(usuarioService.save(usuarioDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -41,8 +42,8 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Usuario> replaceUsuario(@Valid @RequestBody Usuario usuario) {
-        usuarioService.replace(usuario);
+    public ResponseEntity<Usuario> replaceUsuario(@Valid @RequestBody UsuarioDTO usuarioDTO) {
+        usuarioService.replace(usuarioDTO);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 

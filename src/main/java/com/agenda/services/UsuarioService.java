@@ -1,5 +1,7 @@
 package com.agenda.services;
 
+import com.agenda.dto.UsuarioDTO;
+import com.agenda.mapper.UsuarioMapper;
 import com.agenda.models.Usuario;
 import com.agenda.repositorys.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +25,7 @@ public class UsuarioService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username){
         return Optional.ofNullable(usuarioRepository.findByUsername(username))
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario não encontrado"));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
     }
 
     public Page<Usuario> findAll(Pageable pageable) {
@@ -32,19 +34,21 @@ public class UsuarioService implements UserDetailsService {
 
     public Usuario findById(long id) {
         return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Request"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não encontrado"));
     }
 
-    public Usuario save(Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public Usuario save(UsuarioDTO usuarioDTO) {
+        return usuarioRepository.save(UsuarioMapper.INSTANCE.toUsuario(usuarioDTO));
     }
 
     public void delete(long id) {
         usuarioRepository.delete(findById(id));
     }
 
-    public void replace(Usuario usuario) {
-        Usuario savedUsuario = findById(usuario.getId());
+    public void replace(UsuarioDTO usuarioDTO) {
+        Usuario savedUsuario = findById(usuarioDTO.getId());
+        Usuario usuario = UsuarioMapper.INSTANCE.toUsuario(usuarioDTO);
+        usuario.setId(savedUsuario.getId());
         usuarioRepository.save(usuario);
     }
 }
