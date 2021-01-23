@@ -1,65 +1,49 @@
 package com.agenda.controllers;
 
 import com.agenda.models.Contato;
-import com.agenda.repositorys.ContatoRepository;
+import com.agenda.services.ContatoService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RequiredArgsConstructor
 public class ContatoController {
 
-    private final ContatoRepository contatoRepository;
+    private final ContatoService contatoService;
 
     @GetMapping("/contatos")
-    public ResponseEntity<List<Contato>> getAllContatos(){
-        List<Contato> contatos = contatoRepository.findAll();
-        if (contatos.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(contatos, HttpStatus.OK);
+    public ResponseEntity<Page<Contato>> getAllContatos(Pageable pageable){
+        return new ResponseEntity<>(contatoService.listAll(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/contatos/{id}")
     public ResponseEntity<Contato> getOneContato(@PathVariable(value = "id") long id){
-        Optional<Contato> contatoO = contatoRepository.findById(id);
-        if (contatoO.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(contatoO.get(), HttpStatus.OK);
+        return new ResponseEntity<>(contatoService.findById(id), HttpStatus.OK);
     }
 
     @PostMapping("/contatos")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Contato> createContato(@Valid @RequestBody Contato contato){
-        return new ResponseEntity<>(contatoRepository.save(contato), HttpStatus.CREATED);
+        return new ResponseEntity<>(contatoService.save(contato), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/contatos/{id}")
-    public ResponseEntity<?> deleteContato(@PathVariable(value = "id") long id){
-        Optional<Contato> contatoO = contatoRepository.findById(id);
-        if (contatoO.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        contatoRepository.delete(contatoO.get());
+    public ResponseEntity<Void> deleteContato(@PathVariable(value = "id") long id){
+        contatoService.delete(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("/contatos/{id}")
-    public ResponseEntity<Contato> editContato(@Valid @PathVariable(value = "id") long id, @RequestBody Contato contato) {
-        Optional<Contato> contatoO = contatoRepository.findById(id);
-        if (contatoO.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        contato.setId(contatoO.get().getId());
-        return new ResponseEntity<>(contatoRepository.save(contato), HttpStatus.OK);
+    public ResponseEntity<Contato> replaceContato(@Valid @RequestBody Contato contato) {
+        contatoService.replace(contato);
+        return new ResponseEntity<>(contatoService.save(contato), HttpStatus.OK);
     }
 }
