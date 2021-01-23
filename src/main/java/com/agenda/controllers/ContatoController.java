@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +39,7 @@ public class ContatoController {
 
     @PostMapping("/contatos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Contato> createContato(@Validated @RequestBody Contato contato){
+    public ResponseEntity<Contato> createContato(@Valid @RequestBody Contato contato){
         return new ResponseEntity<>(contatoRepository.save(contato), HttpStatus.CREATED);
     }
 
@@ -54,7 +54,7 @@ public class ContatoController {
     }
 
     @PutMapping("/contatos/{id}")
-    public ResponseEntity<Contato> editContato(@Validated @PathVariable(value = "id") long id, @RequestBody Contato contato) {
+    public ResponseEntity<Contato> editContato(@Valid @PathVariable(value = "id") long id, @RequestBody Contato contato) {
         Optional<Contato> contatoO = contatoRepository.findById(id);
         if (contatoO.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
