@@ -1,5 +1,7 @@
 package com.agenda.services;
 
+import com.agenda.dto.ContatoDTO;
+import com.agenda.mapper.ContatoMapper;
 import com.agenda.models.Contato;
 import com.agenda.repositorys.ContatoRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +24,21 @@ public class ContatoService {
 
     public Contato findById(long id) {
         return contatoRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Request"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "Contato não encontrado"));
     }
 
-    public Contato save(Contato contato) {
-        return contatoRepository.save(contato);
+    public Contato save(ContatoDTO contatoDTO) {
+        return contatoRepository.save(ContatoMapper.INSTANCE.toContato(contatoDTO));
     }
 
     public void delete(long id) {
         contatoRepository.delete(findById(id));
     }
 
-    public void replace(Contato contato) {
-        Contato savedUsuario = findById(contato.getId());
+    public void replace(ContatoDTO contatoDTO) {
+        Contato savedUsuario = findById(contatoDTO.getId());
+        Contato contato = ContatoMapper.INSTANCE.toContato(contatoDTO);
+        contato.setId(savedUsuario.getId());
         contatoRepository.save(contato);
     }
 }

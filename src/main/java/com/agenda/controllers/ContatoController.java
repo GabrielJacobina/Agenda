@@ -1,5 +1,6 @@
 package com.agenda.controllers;
 
+import com.agenda.dto.ContatoDTO;
 import com.agenda.models.Contato;
 import com.agenda.services.ContatoService;
 import lombok.RequiredArgsConstructor;
@@ -31,19 +32,19 @@ public class ContatoController {
 
     @PostMapping("/contatos")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<Contato> createContato(@Valid @RequestBody Contato contato){
-        return new ResponseEntity<>(contatoService.save(contato), HttpStatus.CREATED);
+    public ResponseEntity<Contato> createContato(@Valid @RequestBody ContatoDTO contatoDTO){
+        return new ResponseEntity<>(contatoService.save(contatoDTO), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/contatos/{id}")
     public ResponseEntity<Void> deleteContato(@PathVariable(value = "id") long id){
         contatoService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PutMapping("/contatos/{id}")
-    public ResponseEntity<Contato> replaceContato(@Valid @RequestBody Contato contato) {
-        contatoService.replace(contato);
-        return new ResponseEntity<>(contatoService.save(contato), HttpStatus.OK);
+    public ResponseEntity<Contato> replaceContato(@Valid @RequestBody ContatoDTO contatoDTO) {
+        contatoService.replace(contatoDTO);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
