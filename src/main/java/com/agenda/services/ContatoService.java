@@ -2,16 +2,16 @@ package com.agenda.services;
 
 import com.agenda.models.Contato;
 import com.agenda.repositorys.ContatoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class ContatoService {
 
-    @Autowired
-    private ContatoRepository contatoRepository;
+    private final ContatoRepository contatoRepository;
 
 
     public Page<Contato> listAll(Pageable pageable) {

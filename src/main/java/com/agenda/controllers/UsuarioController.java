@@ -3,7 +3,7 @@ package com.agenda.controllers;
 import com.agenda.models.Usuario;
 import com.agenda.repositorys.UsuarioRepository;
 import com.agenda.services.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,15 +15,12 @@ import java.util.Optional;
 @RestController
 @RequestMapping("usuarios")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+@RequiredArgsConstructor
 public class UsuarioController {
 
-    @Autowired
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    @Autowired
-    private UsuarioService usuarioService;
-
-    private Boolean login;
+    private final UsuarioService usuarioService;
 
     @GetMapping
     public ResponseEntity<List<Usuario>> getAllUsuarios(){
@@ -31,27 +28,27 @@ public class UsuarioController {
         if (usuarios.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<List<Usuario>>(usuarios, HttpStatus.OK);
+        return new ResponseEntity<>(usuarios, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Usuario> getOneUsuario(@PathVariable(value = "id") long id){
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
-        if (usuarioO == null){
+        if (usuarioO.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<Usuario>(usuarioO.get(), HttpStatus.OK);
+        return new ResponseEntity<>(usuarioO.get(), HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<Usuario> createUsuario(@Validated @RequestBody Usuario usuario){
-        return new ResponseEntity<Usuario>(usuarioRepository.save(usuario), HttpStatus.CREATED);
+        return new ResponseEntity<>(usuarioRepository.save(usuario), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUsuario(@PathVariable(value = "id") long id){
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
-        if (!usuarioO.isPresent()){
+        if (usuarioO.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         usuarioRepository.delete(usuarioO.get());
@@ -61,37 +58,11 @@ public class UsuarioController {
     @PutMapping("/{id}")
     public ResponseEntity<Usuario> editUsuario(@Validated @PathVariable(value = "id") long id, @RequestBody Usuario usuario) {
         Optional<Usuario> usuarioO = usuarioRepository.findById(id);
-        if (!usuarioO.isPresent()){
+        if (usuarioO.isEmpty()){
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         usuario.setId(usuarioO.get().getId());
         return new ResponseEntity<>(usuarioRepository.save(usuario), HttpStatus.OK);
     }
 
-
-
-//    @PostMapping(path = "/usuarios/login", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public @ResponseBody Boolean loginUsuario(@Validated @RequestBody Usuario usuario) {
-//        login = usuarioService.fazerLogin(usuario);
-//        if (login  == false){
-//            return Boolean.FALSE;
-//        }
-//        return Boolean.TRUE;
-//    }
-
-    public UsuarioService getUsuarioService() {
-        return usuarioService;
-    }
-
-    public void setUsuarioService(UsuarioService usuarioService) {
-        this.usuarioService = usuarioService;
-    }
-
-    public Boolean getLogin() {
-        return login;
-    }
-
-    public void setLogin(Boolean login) {
-        this.login = login;
-    }
 }
